@@ -19,7 +19,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 space-y-24">
+    <div className="max-w-7xl mx-auto px-6 py-16 pt-24 space-y-24">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-muted-silver/20 pb-16">
         <div className="space-y-6">
           <div className="h-24 w-24 rounded-3xl bg-ash-white border border-muted-silver/30 flex items-center justify-center text-3xl font-serif text-slate-blue-gray shadow-sm">

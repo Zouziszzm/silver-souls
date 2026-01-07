@@ -3,13 +3,17 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  /* Colors */
-  --color-snow-blue: #f0f4f8;
-  --color-ash-white: #fcfcfc;
-  --color-slate-blue-gray: #334e68;
-  --color-ink-gray: #486581;
-  --color-muted-silver: #bcccdc;
-  --color-antique-gold: #b6922e;
+  /* Colors - Refined for "Premium Literary" feel */
+  --color-snow-blue: #f5f7fa; /* Slightly warmer/brighter than before */
+  --color-ash-white: #ffffff;
+  --color-slate-blue-gray: #2d3748; /* Deeper, more authoritative text */
+  --color-ink-gray: #4a5568; /* Softer secondary text */
+  --color-muted-silver: #cbd5e0;
+  --color-antique-gold: #c5a045; /* Richer gold */
+
+  /* Additional Premium Tones */
+  --color-paper-cream: #fdfbf7; /* For special cards/sections */
+  --color-deep-night: #1a202c; /* For high contrast elements */
 
   /* Semantic Colors */
   --color-background: var(--color-snow-blue);
@@ -28,12 +32,17 @@
 }
 
 body {
-  background-color: var(--color-snow-blue);
-  color: var(--color-slate-blue-gray);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.7; /* Increased for better readability */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(240, 244, 248, 0) 70%
+  );
 }
 
 h1,
@@ -42,14 +51,26 @@ h3,
 h4,
 .sliver-text {
   font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
+/* Premium Card Styles */
 .sliver-card {
-  background-color: var(--color-ash-white);
-  border: 1px solid var(--color-muted-silver);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--color-surface);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle base shadow */
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Smooth apple-like spring */
 }
 
 .sliver-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1); /* Elevated shadow */
+  border-color: rgba(197, 160, 69, 0.3); /* Subtle gold hint on hover */
+}
+
+/* Smooth selection */
+::selection {
+  background-color: rgba(197, 160, 69, 0.2);
+  color: var(--color-slate-blue-gray);
 }

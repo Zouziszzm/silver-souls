@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Masonry from "react-masonry-css";
 import { SliverCard } from "@/components/SliverCard";
+import { Hero } from "@/components/Hero";
 import { MOCK_SLIVERS } from "@/data/mockSlivers";
 
 export default function Home() {
@@ -32,18 +33,22 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <Masonry
-        breakpointCols={breakpointColumns}
-        className="flex -ml-6 w-auto"
-        columnClassName="pl-6 bg-clip-padding"
-      >
-        {MOCK_SLIVERS.map((sliver) => (
-          <div key={sliver.id} className="mb-6">
-            <SliverCard sliver={sliver} />
-          </div>
-        ))}
-      </Masonry>
+    <div className="min-h-screen">
+      <Hero />
+
+      <div className="max-w-7xl mx-auto px-6 pb-24">
+        <Masonry
+          breakpointCols={breakpointColumns}
+          className="flex -ml-6 w-auto"
+          columnClassName="pl-6 bg-clip-padding"
+        >
+          {MOCK_SLIVERS.map((sliver, index) => (
+            <div key={sliver.id} className="mb-8">
+              <SliverCard sliver={sliver} />
+            </div>
+          ))}
+        </Masonry>
+      </div>
     </div>
   );
 }

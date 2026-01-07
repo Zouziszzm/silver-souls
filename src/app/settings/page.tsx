@@ -5,7 +5,7 @@ import { User, Settings, BellOff, Eye, LogOut } from "lucide-react";
 
 export default function SettingsPage() {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-16 space-y-16">
+    <div className="max-w-3xl mx-auto px-6 py-16 pt-24 space-y-16">
       <header className="space-y-4">
         <h1 className="text-4xl font-serif text-slate-blue-gray">Settings</h1>
         <p className="text-ink-gray">

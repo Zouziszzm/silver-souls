@@ -30,7 +30,7 @@ export default function SliverDetailPage() {
     );
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-24 min-h-screen">
+    <div className="max-w-3xl mx-auto px-6 py-24 pt-28 min-h-screen">
       <button
         onClick={() => router.back()}
         className="mb-16 flex items-center gap-2 text-ink-gray/60 hover:text-slate-blue-gray transition-colors group"
