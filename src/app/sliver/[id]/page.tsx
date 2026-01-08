@@ -6,6 +6,7 @@ import { Heart, Bookmark, Share2, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSliver } from "@/lib/hooks";
 import { MOCK_SLIVERS } from "@/data/mockSlivers";
+import { AUTHOR_LINKS } from "@/lib/constants";
 
 export default function SliverDetailPage() {
   const { id } = useParams();
@@ -42,6 +43,8 @@ export default function SliverDetailPage() {
       </div>
     );
 
+  const authorLink = AUTHOR_LINKS[sliver.author];
+
   return (
     <div className="max-w-3xl mx-auto px-6 py-24 pt-28 min-h-screen">
       <button
@@ -57,10 +60,15 @@ export default function SliverDetailPage() {
           <span className="text-xs uppercase tracking-[0.2em] text-ink-gray/40 font-sans font-semibold">
             {sliver.type}
           </span>
+          {sliver.title && (
+            <h1 className="text-3xl md:text-5xl font-serif font-bold text-slate-blue-gray mb-6">
+              {sliver.title}
+            </h1>
+          )}
           <p
             className={cn(
-              "sliver-text text-slate-blue-gray leading-[1.8] text-3xl md:text-4xl",
-              sliver.type === "Quote" ? "italic" : ""
+              "sliver-text text-slate-blue-gray leading-[1.8] text-2xl md:text-3xl",
+              sliver.type === "Quote" ? "italic" : "whitespace-pre-wrap"
             )}
           >
             {sliver.content}
@@ -69,9 +77,20 @@ export default function SliverDetailPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-t border-muted-silver/20 pt-12">
           <div className="space-y-2">
-            <p className="text-lg font-serif font-medium text-slate-blue-gray">
-              {sliver.author}
-            </p>
+            {authorLink ? (
+              <a
+                href={authorLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg font-serif font-medium text-slate-blue-gray hover:text-antique-gold transition-colors underline decoration-transparent hover:decoration-antique-gold/50 underline-offset-4"
+              >
+                {sliver.author}
+              </a>
+            ) : (
+              <p className="text-lg font-serif font-medium text-slate-blue-gray">
+                {sliver.author}
+              </p>
+            )}
             <div className="flex flex-wrap gap-3">
               {sliver.tags.map((tag) => (
                 <span

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Sliver, SliverType } from "@/lib/types";
 import { togglePrestige, toggleSaveSliver } from "@/lib/api";
+import { AUTHOR_LINKS } from "@/lib/constants";
 
 const TYPE_ICONS = {
   Quote: Quote,
@@ -136,12 +137,17 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
       </div>
 
       <div className="flex-grow relative z-10 pointer-events-none">
+        {sliver.title && (
+          <h3 className="mb-4 text-xl font-bold font-serif text-slate-800 opacity-90 group-hover:opacity-100 transition-opacity">
+            {sliver.title}
+          </h3>
+        )}
         <p
           className={cn(
             "sliver-text text-slate-blue-gray leading-7 transition-colors duration-300 group-hover:text-slate-800",
             sliver.type === "Quote"
               ? "text-xl italic font-serif"
-              : "text-lg font-serif"
+              : "text-lg font-serif whitespace-pre-wrap"
           )}
         >
           {sliver.content}
@@ -150,9 +156,21 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
 
       <div className="flex justify-between items-end border-t border-muted-silver/20 pt-4 mt-2 relative z-10">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-blue-gray/90 group-hover:text-black transition-colors pointer-events-none">
-            {sliver.author}
-          </p>
+          {AUTHOR_LINKS[sliver.author] ? (
+            <a
+              href={AUTHOR_LINKS[sliver.author]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-slate-blue-gray/90 group-hover:text-black transition-colors z-20 relative hover:underline decoration-antique-gold/50 underline-offset-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {sliver.author}
+            </a>
+          ) : (
+            <p className="text-sm font-medium text-slate-blue-gray/90 group-hover:text-black transition-colors pointer-events-none">
+              {sliver.author}
+            </p>
+          )}
           <div className="flex gap-2 flex-wrap pointer-events-none">
             {sliver.tags.map((tag) => (
               <span

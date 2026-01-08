@@ -1,12 +1,15 @@
 import axios from "axios";
 import { Sliver, SliverType } from "@/lib/types";
+import { MOCK_SLIVERS } from "@/data/mockSlivers";
 
-export const API_URL = "http://localhost:4000";
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const apiClient = axios.create({
   baseURL: API_URL,
 });
 
+/*
 apiClient.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("ss_token");
@@ -16,6 +19,7 @@ apiClient.interceptors.request.use((config) => {
   }
   return config;
 });
+*/
 
 export interface BackendSliver {
   id: string;
@@ -44,6 +48,9 @@ export function mapToSliverType(type: string): SliverType {
 }
 
 export async function devLogin(): Promise<string | null> {
+  // Mock login success
+  return "mock-token-123";
+  /*
   try {
     const { data } = await apiClient.post<{ access_token: string }>(
       "/auth/dev-login"
@@ -53,9 +60,19 @@ export async function devLogin(): Promise<string | null> {
     console.error("Dev login failed:", error);
     return null;
   }
+  */
 }
 
 export async function fetchSlivers({ pageParam = 1 }): Promise<Sliver[]> {
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  // Return slices of mock data to simulate pagination
+  const start = (pageParam - 1) * 10;
+  const end = start + 10;
+  return MOCK_SLIVERS.slice(start, end);
+
+  /*
   try {
     const { data } = await apiClient.get<BackendSliver[]>(
       `/slivers?page=${pageParam}&limit=10`
@@ -72,11 +89,14 @@ export async function fetchSlivers({ pageParam = 1 }): Promise<Sliver[]> {
     console.error("API Error:", error);
     return [];
   }
+  */
 }
 
-import { MOCK_SLIVERS } from "@/data/mockSlivers";
-
 export async function fetchMySlivers(): Promise<Sliver[]> {
+  // Return random subset for "my" slivers
+  return MOCK_SLIVERS.slice(0, 5);
+
+  /*
   // Guest mode check removed to prevent confusion with mock data
   try {
     const { data } = await apiClient.get<BackendSliver[]>(
@@ -94,9 +114,13 @@ export async function fetchMySlivers(): Promise<Sliver[]> {
     console.error("API Error:", error);
     return [];
   }
+  */
 }
 
 export async function fetchSliver(id: string): Promise<Sliver | null> {
+  return MOCK_SLIVERS.find((s) => s.id === id) || null;
+
+  /*
   try {
     const { data } = await apiClient.get<BackendSliver>(`/slivers/${id}`);
     return {
@@ -111,7 +135,9 @@ export async function fetchSliver(id: string): Promise<Sliver | null> {
     console.error("API Error:", error);
     return null;
   }
+  */
 }
+
 // ... existing code ...
 export interface Collection {
   id: string;
@@ -136,6 +162,25 @@ export interface BackendCollection {
 }
 
 export async function fetchMyCollections(): Promise<Collection[]> {
+  // Mock collections
+  return [
+    {
+      id: "col-1",
+      title: "Favorites",
+      description: "My favorite quotes",
+      count: 3,
+      previewSlivers: MOCK_SLIVERS.slice(0, 3),
+    },
+    {
+      id: "col-2",
+      title: "Deep Thoughts",
+      description: null,
+      count: 2,
+      previewSlivers: MOCK_SLIVERS.slice(5, 7),
+    },
+  ];
+
+  /*
   // Guest mode check removed
   try {
     const { data } = await apiClient.get<BackendCollection[]>(
@@ -159,6 +204,7 @@ export async function fetchMyCollections(): Promise<Collection[]> {
   } catch (error) {
     return [];
   }
+  */
 }
 
 export async function createCollection(data: {
@@ -166,6 +212,16 @@ export async function createCollection(data: {
   description: string;
   isPublic: boolean;
 }): Promise<Collection | null> {
+  // Mock creation
+  return {
+    id: `new-col-${Date.now()}`,
+    title: data.title,
+    description: data.description,
+    count: 0,
+    previewSlivers: [],
+  };
+
+  /*
   const token = localStorage.getItem("ss_token");
   if (!token) return null;
 
@@ -187,9 +243,18 @@ export async function createCollection(data: {
     console.error("Failed to create collection:", error);
     return null;
   }
+  */
 }
 
 export async function searchSlivers(query: string): Promise<Sliver[]> {
+  const lowerQ = query.toLowerCase();
+  return MOCK_SLIVERS.filter(
+    (s) =>
+      s.content.toLowerCase().includes(lowerQ) ||
+      s.author.toLowerCase().includes(lowerQ)
+  );
+
+  /*
   try {
     // Assuming backend supports q query param
     const { data } = await apiClient.get<BackendSliver[]>(
@@ -207,9 +272,12 @@ export async function searchSlivers(query: string): Promise<Sliver[]> {
     console.error("Search failed:", error);
     return [];
   }
+  */
 }
 
 export async function togglePrestige(sliverId: string): Promise<boolean> {
+  return true; // Mock success
+  /*
   try {
     const { data } = await apiClient.post<{ liked: boolean }>(
       `/slivers/${sliverId}/prestige`
@@ -219,9 +287,12 @@ export async function togglePrestige(sliverId: string): Promise<boolean> {
     console.error("Failed to toggle prestige", error);
     throw error;
   }
+  */
 }
 
 export async function toggleSaveSliver(sliverId: string): Promise<boolean> {
+  return true; // Mock success
+  /*
   try {
     const { data } = await apiClient.post<{ saved: boolean }>(
       `/collections/save/${sliverId}`
@@ -231,11 +302,34 @@ export async function toggleSaveSliver(sliverId: string): Promise<boolean> {
     console.error("Failed to toggle save", error);
     throw error;
   }
+  */
 }
 
 export async function fetchCollection(
   id: string
 ): Promise<BackendCollection | null> {
+  // Mock returning a collection
+  return {
+    id: id,
+    title: "Mock Collection",
+    description: "This is a mock collection",
+    createdAt: new Date().toISOString(),
+    isPublic: true,
+    _count: { slivers: 2 },
+    slivers: MOCK_SLIVERS.slice(0, 2).map((s) => ({
+      sliver: {
+        id: s.id,
+        type: s.type.toUpperCase() as any, // Cast for mock simplicity
+        contentText: s.content,
+        createdAt: new Date().toISOString(),
+        author: { name: s.author },
+        genres: s.tags.map((t) => ({ genre: { name: t } })),
+        _count: { prestigeReceived: s.prestige },
+      },
+    })),
+  };
+
+  /*
   try {
     const { data } = await apiClient.get<BackendCollection>(
       `/collections/${id}`
@@ -245,6 +339,7 @@ export async function fetchCollection(
     console.error("Failed to fetch collection:", error);
     return null;
   }
+  */
 }
 
 export interface SystemStats {
@@ -256,6 +351,24 @@ export interface SystemStats {
 }
 
 export async function fetchSystemStats(): Promise<SystemStats | null> {
+  return {
+    totalSlivers: 1240,
+    totalAuthors: 56,
+    pendingReports: 0,
+    typeDistribution: [
+      { name: "Quote", value: 40 },
+      { name: "Poem", value: 30 },
+      { name: "Literature", value: 20 },
+      { name: "Essay", value: 10 },
+    ],
+    activity: [
+      { name: "Mon", value: 10 },
+      { name: "Tue", value: 20 },
+      { name: "Wed", value: 15 },
+    ],
+  };
+
+  /*
   try {
     const { data } = await apiClient.get<SystemStats>("/slivers/stats");
     return data;
@@ -263,4 +376,5 @@ export async function fetchSystemStats(): Promise<SystemStats | null> {
     console.error("Failed to fetch system stats:", error);
     return null;
   }
+  */
 }
