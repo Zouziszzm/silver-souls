@@ -30,18 +30,6 @@ export default function Home() {
     [isFetchingNextPage, fetchNextPage, hasNextPage]
   );
 
-  useEffect(() => {
-    if (!mounted) return;
-    const hasOnboarded = localStorage.getItem("ss_onboarded") === "true";
-    if (
-      !hasOnboarded &&
-      typeof window !== "undefined" &&
-      window.location.pathname === "/"
-    ) {
-      router.push("/login");
-    }
-  }, [mounted, router]);
-
   if (!mounted) return null;
 
   const breakpointColumns = {

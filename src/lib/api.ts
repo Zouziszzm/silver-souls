@@ -36,11 +36,23 @@ export interface BackendSliver {
 }
 
 // Helper to validate/cast type
-function mapToSliverType(type: string): SliverType {
+export function mapToSliverType(type: string): SliverType {
   const capitalized =
     type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
   // In a real app, validate against array of allowed types if needed
   return capitalized as SliverType;
+}
+
+export async function devLogin(): Promise<string | null> {
+  try {
+    const { data } = await apiClient.post<{ access_token: string }>(
+      "/auth/dev-login"
+    );
+    return data.access_token;
+  } catch (error) {
+    console.error("Dev login failed:", error);
+    return null;
+  }
 }
 
 export async function fetchSlivers({ pageParam = 1 }): Promise<Sliver[]> {
@@ -218,5 +230,37 @@ export async function toggleSaveSliver(sliverId: string): Promise<boolean> {
   } catch (error) {
     console.error("Failed to toggle save", error);
     throw error;
+  }
+}
+
+export async function fetchCollection(
+  id: string
+): Promise<BackendCollection | null> {
+  try {
+    const { data } = await apiClient.get<BackendCollection>(
+      `/collections/${id}`
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch collection:", error);
+    return null;
+  }
+}
+
+export interface SystemStats {
+  totalSlivers: number;
+  totalAuthors: number;
+  pendingReports: number;
+  typeDistribution: { name: string; value: number }[];
+  activity: { name: string; value: number }[];
+}
+
+export async function fetchSystemStats(): Promise<SystemStats | null> {
+  try {
+    const { data } = await apiClient.get<SystemStats>("/slivers/stats");
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch system stats:", error);
+    return null;
   }
 }

@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Sliver, SliverType } from "@/lib/types";
+import { togglePrestige, toggleSaveSliver } from "@/lib/api";
 
 const TYPE_ICONS = {
   Quote: Quote,
@@ -34,13 +35,46 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
   const [isSaved, setIsSaved] = React.useState(false);
   const [prestigeCount, setPrestigeCount] = React.useState(sliver.prestige);
 
-  const handleLike = () => {
+  const handleLike = async () => {
+    const token = localStorage.getItem("ss_token");
+    if (!token) {
+      alert("You must be logged in to give prestige.");
+      return;
+    }
+
+    // Optimistic update
+    const previousLiked = isLiked;
+    const previousCount = prestigeCount;
+
     setIsLiked(!isLiked);
     setPrestigeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+
+    try {
+      await togglePrestige(sliver.id);
+    } catch (error) {
+      // Revert on error
+      setIsLiked(previousLiked);
+      setPrestigeCount(previousCount);
+      console.error("Failed to toggle like", error);
+    }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    const token = localStorage.getItem("ss_token");
+    if (!token) {
+      alert("You must be logged in to save slivers.");
+      return;
+    }
+
+    const previousSaved = isSaved;
     setIsSaved(!isSaved);
+
+    try {
+      await toggleSaveSliver(sliver.id);
+    } catch (error) {
+      setIsSaved(previousSaved);
+      console.error("Failed to toggle save", error);
+    }
   };
 
   const handleShare = async () => {
