@@ -1,4 +1,4 @@
-import { Sliver } from "@/components/SliverCard";
+import { Sliver } from "@/lib/types";
 
 export const MOCK_SLIVERS: Sliver[] = [
   {

@@ -74,3 +74,8 @@ h4,
   background-color: rgba(197, 160, 69, 0.2);
   color: var(--color-slate-blue-gray);
 }
+
+::-webkit-scrollbar{
+  display: none;
+  width: 0;
+}

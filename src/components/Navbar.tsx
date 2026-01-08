@@ -9,12 +9,21 @@ import { SearchOverlay } from "./SearchOverlay";
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const checkAuth = () => {
+      const token = localStorage.getItem("ss_token");
+      setIsAuthenticated(!!token);
     };
+
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("storage", checkAuth); // Listen for storage changes
+
+    // Initial check and interval for simple polling (in case storage event doesn't fire across same tab)
+    checkAuth();
+    const interval = setInterval(checkAuth, 1000);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -30,6 +39,8 @@ export const Navbar = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("storage", checkAuth);
+      clearInterval(interval);
     };
   }, []);
 
@@ -79,19 +90,35 @@ export const Navbar = () => {
             isOpen={isSearchOpen}
             onClose={() => setIsSearchOpen(false)}
           />
-          <Link
-            href="/create"
-            className="flex items-center gap-2 px-5 py-2 bg-slate-blue-gray text-white rounded-full text-sm font-medium hover:bg-slate-blue-gray/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Create</span>
-          </Link>
 
-          <div className="flex items-center gap-3 text-ink-gray border-l border-muted-silver/30 pl-5">
-            <NavLink href="/collections" icon={Library} label="Collections" />
-            <NavLink href="/profile" icon={User} label="Profile" />
-            <NavLink href="/settings" icon={Settings} label="Settings" />
-          </div>
+          {isAuthenticated ? (
+            <>
+              <Link
+                href="/create"
+                className="flex items-center gap-2 px-5 py-2 bg-slate-blue-gray text-white rounded-full text-sm font-medium hover:bg-slate-blue-gray/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Create</span>
+              </Link>
+
+              <div className="flex items-center gap-3 text-ink-gray border-l border-muted-silver/30 pl-5">
+                <NavLink
+                  href="/collections"
+                  icon={Library}
+                  label="Collections"
+                />
+                <NavLink href="/profile" icon={User} label="Profile" />
+                <NavLink href="/settings" icon={Settings} label="Settings" />
+              </div>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="px-6 py-2 bg-slate-blue-gray text-white rounded-full text-sm font-medium hover:bg-slate-blue-gray/90 hover:shadow-lg transition-all"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
     </nav>

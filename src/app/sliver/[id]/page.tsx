@@ -3,13 +3,26 @@
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Heart, Bookmark, Share2, ArrowLeft } from "lucide-react";
-import { MOCK_SLIVERS } from "@/data/mockSlivers";
 import { cn } from "@/lib/utils";
+import { useSliver } from "@/lib/hooks";
+import { MOCK_SLIVERS } from "@/data/mockSlivers";
 
 export default function SliverDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const sliver = MOCK_SLIVERS.find((s) => s.id === id);
+
+  const { data: fetchedSliver, isLoading } = useSliver(id as string);
+
+  // Use fetched sliver if available, otherwise check mock for immediate fallback/demo
+  const sliver = fetchedSliver || MOCK_SLIVERS.find((s) => s.id === id);
+
+  if (isLoading && !sliver) {
+    return (
+      <div className="min-h-screen pt-32 text-center text-ink-gray/60 font-serif">
+        Summoning thought...
+      </div>
+    );
+  }
 
   if (!sliver)
     return (
@@ -92,12 +105,14 @@ export default function SliverDetailPage() {
 
             <button className="flex flex-col items-center gap-1 group">
               <div className="p-3 rounded-full bg-ash-white border border-muted-silver/30 group-hover:border-slate-blue-gray/30 group-hover:bg-ash-white transition-all shadow-sm">
-                <Share2 className="h-5 w-5 text-ink-gray/40 group-hover:text-slate-blue-gray/60" />
+                <Bookmark className="h-5 w-5 text-ink-gray/40 group-hover:text-slate-blue-gray/60" />
               </div>
               <span className="text-xs font-sans font-medium text-ink-gray/60">
-                Share
+                Save
               </span>
             </button>
+
+            {/* Share button temporarily disabled */}
           </div>
         </div>
       </article>

@@ -1,21 +1,28 @@
 "use client";
 
 import React from "react";
-import { Heart, Bookmark, Share2, MoreHorizontal } from "lucide-react";
 import { motion } from "framer-motion";
+import {
+  Quote,
+  Feather,
+  BookOpen,
+  PenTool,
+  Share2,
+  Heart,
+  MessageCircle,
+  Bookmark,
+  MoreHorizontal,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Sliver, SliverType } from "@/lib/types";
 
-export type SliverType = "Quote" | "Poem" | "Literature" | "Essay";
-
-export interface Sliver {
-  id: string;
-  type: SliverType;
-  content: string;
-  author: string;
-  prestige: number;
-  tags: string[];
-}
+const TYPE_ICONS = {
+  Quote: Quote,
+  Poem: Feather,
+  Literature: BookOpen,
+  Essay: PenTool,
+};
 
 interface SliverCardProps {
   sliver: Sliver;

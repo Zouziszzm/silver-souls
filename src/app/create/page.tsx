@@ -44,6 +44,46 @@ export default function CreateSliverPage() {
     return true;
   };
 
+  // ... inside CreateSliverPage component ...
+  const handlePublish = async () => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("ss_token") : null;
+
+    if (!token) {
+      if (
+        confirm(
+          "You must be logged in to release a Sliver into the world. Sign in now?"
+        )
+      ) {
+        window.location.href = "http://localhost:4000/auth/google";
+      }
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:4000/slivers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: type?.toUpperCase(),
+          contentText: content,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to release sliver");
+      }
+
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to release sliver into the silence.");
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 pt-24 min-h-[calc(100vh-64px)] flex flex-col">
       <div className="flex items-center justify-between mb-12">
@@ -70,6 +110,7 @@ export default function CreateSliverPage() {
       <div className="flex-grow flex flex-col">
         {step === 1 && (
           <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* ... step 1 content ... */}
             <header className="text-center space-y-4">
               <h1 className="text-4xl font-serif text-slate-blue-gray">
                 Select Form
@@ -211,7 +252,7 @@ export default function CreateSliverPage() {
           </button>
         ) : (
           <button
-            onClick={() => router.push("/")}
+            onClick={handlePublish}
             className="flex items-center gap-3 px-12 py-4 bg-slate-blue-gray text-ash-white rounded-full font-medium hover:scale-105 active:scale-95 transition-all shadow-lg"
           >
             Release into the Silence

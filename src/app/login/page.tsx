@@ -6,8 +6,8 @@ import { LogIn } from "lucide-react";
 
 export default function LoginPage() {
   const handleGoogleLogin = () => {
-    // Simulated login logic
-    window.location.href = "/onboarding";
+    // Redirect to Backend Google Auth Endpoint
+    window.location.href = "http://localhost:4000/auth/google";
   };
 
   return (
@@ -27,13 +27,30 @@ export default function LoginPage() {
             Step into the quiet library. Gather your thoughts, share your soul.
           </p>
 
-          <button
-            onClick={handleGoogleLogin}
-            className="w-full h-12 flex items-center justify-center gap-3 bg-slate-blue-gray text-ash-white rounded-full font-medium hover:bg-slate-blue-gray/90 transition-all active:scale-[0.98]"
-          >
-            <LogIn className="h-5 w-5" />
-            Continue with Google
-          </button>
+          <div className="space-y-4">
+            {/* <button
+              onClick={handleGoogleLogin}
+              className="w-full h-12 flex items-center justify-center gap-3 bg-slate-blue-gray text-ash-white rounded-full font-medium hover:bg-slate-blue-gray/90 transition-all active:scale-[0.98]"
+            >
+              <LogIn className="h-5 w-5" />
+              Continue with Google
+            </button> */}
+            <div className="text-center text-sm text-ink-gray/40 italic pb-2">
+              Google Login temporarily disabled for guest access.
+            </div>
+            <button
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  localStorage.setItem("ss_token", "guest_mode");
+                  localStorage.setItem("ss_onboarded", "true");
+                  window.location.href = "/";
+                }
+              }}
+              className="w-full h-12 flex items-center justify-center gap-3 bg-slate-blue-gray text-ash-white rounded-full font-medium hover:bg-slate-blue-gray/90 transition-all active:scale-[0.98]"
+            >
+              Continue as Guest
+            </button>
+          </div>
         </div>
 
         <footer className="pt-8">
