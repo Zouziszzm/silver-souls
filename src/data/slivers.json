@@ -185,13 +185,14 @@
         ]
     },
     {
-        "id": "unk-quote-1",
-        "type: "Literature","content": "She said, 'Have you no more memories?' I whispered, 'I am made of memories.'",
-        "author": "Unknown",
-        "prestige": 1120,
+        "id": "ow-quote-1",
+        "type": "Quote",
+        "content": "My existence is a scandal.",
+        "author": "Oscar Wilde",
+        "prestige": 2400,
         "tags": [
-            "memory",
-            "dialogue"
+            "scandal",
+            "identity"
         ]
     },
     {
