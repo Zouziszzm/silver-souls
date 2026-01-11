@@ -1,25 +1,10 @@
-import axios from "axios";
 import { Sliver, SliverType } from "@/lib/types";
-import { MOCK_SLIVERS } from "@/data/mockSlivers";
+import sliversData from "@/data/slivers.json";
 
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+// Type assertion for the imported JSON data
+const ALL_SLIVERS: Sliver[] = sliversData as Sliver[];
 
-const apiClient = axios.create({
-  baseURL: API_URL,
-});
-
-/*
-apiClient.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("ss_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
-  return config;
-});
-*/
+export const API_URL = ""; // No API URL needed anymore
 
 export interface BackendSliver {
   id: string;
@@ -43,99 +28,30 @@ export interface BackendSliver {
 export function mapToSliverType(type: string): SliverType {
   const capitalized =
     type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
-  // In a real app, validate against array of allowed types if needed
   return capitalized as SliverType;
 }
 
 export async function devLogin(): Promise<string | null> {
-  // Mock login success
   return "mock-token-123";
-  /*
-  try {
-    const { data } = await apiClient.post<{ access_token: string }>(
-      "/auth/dev-login"
-    );
-    return data.access_token;
-  } catch (error) {
-    console.error("Dev login failed:", error);
-    return null;
-  }
-  */
 }
 
 export async function fetchSlivers({ pageParam = 1 }): Promise<Sliver[]> {
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 500));
 
-  // Return slices of mock data to simulate pagination
+  // Return slices of local data to simulate pagination
   const start = (pageParam - 1) * 10;
   const end = start + 10;
-  return MOCK_SLIVERS.slice(start, end);
-
-  /*
-  try {
-    const { data } = await apiClient.get<BackendSliver[]>(
-      `/slivers?page=${pageParam}&limit=10`
-    );
-    return data.map((item) => ({
-      id: item.id,
-      type: mapToSliverType(item.type),
-      content: item.contentText,
-      author: item.author?.name || "Anonymous",
-      prestige: item._count?.prestigeReceived || 0,
-      tags: item.genres?.map((g) => g.genre?.name).filter(Boolean) || [],
-    }));
-  } catch (error) {
-    console.error("API Error:", error);
-    return [];
-  }
-  */
+  return ALL_SLIVERS.slice(start, end);
 }
 
 export async function fetchMySlivers(): Promise<Sliver[]> {
-  // Return random subset for "my" slivers
-  return MOCK_SLIVERS.slice(0, 5);
-
-  /*
-  // Guest mode check removed to prevent confusion with mock data
-  try {
-    const { data } = await apiClient.get<BackendSliver[]>(
-      "/slivers/my-slivers"
-    );
-    return data.map((item) => ({
-      id: item.id,
-      type: mapToSliverType(item.type),
-      content: item.contentText,
-      author: item.author?.name || "Anonymous",
-      prestige: item._count?.prestigeReceived || 0,
-      tags: item.genres?.map((g) => g.genre?.name).filter(Boolean) || [],
-    }));
-  } catch (error) {
-    console.error("API Error:", error);
-    return [];
-  }
-  */
+  // Return random subset for "my" slivers from local data
+  return ALL_SLIVERS.slice(0, 5);
 }
 
 export async function fetchSliver(id: string): Promise<Sliver | null> {
-  return MOCK_SLIVERS.find((s) => s.id === id) || null;
-
-  /*
-  try {
-    const { data } = await apiClient.get<BackendSliver>(`/slivers/${id}`);
-    return {
-      id: data.id,
-      type: mapToSliverType(data.type),
-      content: data.contentText,
-      author: data.author?.name || "Anonymous",
-      prestige: data._count?.prestigeReceived || 0,
-      tags: data.genres?.map((g) => g.genre?.name).filter(Boolean) || [],
-    };
-  } catch (error) {
-    console.error("API Error:", error);
-    return null;
-  }
-  */
+  return ALL_SLIVERS.find((s) => s.id === id) || null;
 }
 
 // ... existing code ...
@@ -162,49 +78,23 @@ export interface BackendCollection {
 }
 
 export async function fetchMyCollections(): Promise<Collection[]> {
-  // Mock collections
+  // Mock collections using local data
   return [
     {
       id: "col-1",
       title: "Favorites",
       description: "My favorite quotes",
       count: 3,
-      previewSlivers: MOCK_SLIVERS.slice(0, 3),
+      previewSlivers: ALL_SLIVERS.slice(0, 3),
     },
     {
       id: "col-2",
       title: "Deep Thoughts",
       description: null,
       count: 2,
-      previewSlivers: MOCK_SLIVERS.slice(5, 7),
+      previewSlivers: ALL_SLIVERS.slice(5, 7),
     },
   ];
-
-  /*
-  // Guest mode check removed
-  try {
-    const { data } = await apiClient.get<BackendCollection[]>(
-      "/collections/my-collections"
-    );
-    return data.map((item) => ({
-      id: item.id,
-      title: item.title,
-      description: item.description,
-      count: item._count?.slivers || 0,
-      previewSlivers:
-        item.slivers?.map((s) => ({
-          id: s.sliver.id,
-          type: mapToSliverType(s.sliver.type),
-          content: s.sliver.contentText,
-          author: s.sliver.author?.name || "Anonymous",
-          prestige: s.sliver._count?.prestigeReceived || 0,
-          tags: [],
-        })) || [],
-    }));
-  } catch (error) {
-    return [];
-  }
-  */
 }
 
 export async function createCollection(data: {
@@ -220,89 +110,25 @@ export async function createCollection(data: {
     count: 0,
     previewSlivers: [],
   };
-
-  /*
-  const token = localStorage.getItem("ss_token");
-  if (!token) return null;
-
-  try {
-    const response = await apiClient.post<BackendCollection>(
-      "/collections",
-      data
-    );
-    // Map the response to our Collection interface
-
-    return {
-      id: response.data.id,
-      title: response.data.title,
-      description: response.data.description,
-      count: 0,
-      previewSlivers: [], // New collection has no slivers
-    };
-  } catch (error) {
-    console.error("Failed to create collection:", error);
-    return null;
-  }
-  */
 }
 
 export async function searchSlivers(query: string): Promise<Sliver[]> {
   const lowerQ = query.toLowerCase();
-  return MOCK_SLIVERS.filter(
+  return ALL_SLIVERS.filter(
     (s) =>
       s.content.toLowerCase().includes(lowerQ) ||
       s.author.toLowerCase().includes(lowerQ)
   );
-
-  /*
-  try {
-    // Assuming backend supports q query param
-    const { data } = await apiClient.get<BackendSliver[]>(
-      `/slivers?search=${query}`
-    );
-    return data.map((item) => ({
-      id: item.id,
-      type: mapToSliverType(item.type),
-      content: item.contentText,
-      author: item.author?.name || "Anonymous",
-      prestige: item._count?.prestigeReceived || 0,
-      tags: item.genres?.map((g) => g.genre?.name).filter(Boolean) || [],
-    }));
-  } catch (error) {
-    console.error("Search failed:", error);
-    return [];
-  }
-  */
 }
 
 export async function togglePrestige(sliverId: string): Promise<boolean> {
-  return true; // Mock success
-  /*
-  try {
-    const { data } = await apiClient.post<{ liked: boolean }>(
-      `/slivers/${sliverId}/prestige`
-    );
-    return data.liked;
-  } catch (error) {
-    console.error("Failed to toggle prestige", error);
-    throw error;
-  }
-  */
+  // In a real local-first app, we'd update local state or localStorage here.
+  // For now, just return success.
+  return true;
 }
 
 export async function toggleSaveSliver(sliverId: string): Promise<boolean> {
-  return true; // Mock success
-  /*
-  try {
-    const { data } = await apiClient.post<{ saved: boolean }>(
-      `/collections/save/${sliverId}`
-    );
-    return data.saved;
-  } catch (error) {
-    console.error("Failed to toggle save", error);
-    throw error;
-  }
-  */
+  return true;
 }
 
 export async function fetchCollection(
@@ -316,7 +142,7 @@ export async function fetchCollection(
     createdAt: new Date().toISOString(),
     isPublic: true,
     _count: { slivers: 2 },
-    slivers: MOCK_SLIVERS.slice(0, 2).map((s) => ({
+    slivers: ALL_SLIVERS.slice(0, 2).map((s) => ({
       sliver: {
         id: s.id,
         type: s.type.toUpperCase() as any, // Cast for mock simplicity
@@ -328,18 +154,6 @@ export async function fetchCollection(
       },
     })),
   };
-
-  /*
-  try {
-    const { data } = await apiClient.get<BackendCollection>(
-      `/collections/${id}`
-    );
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch collection:", error);
-    return null;
-  }
-  */
 }
 
 export interface SystemStats {
@@ -352,14 +166,14 @@ export interface SystemStats {
 
 export async function fetchSystemStats(): Promise<SystemStats | null> {
   return {
-    totalSlivers: 1240,
-    totalAuthors: 56,
+    totalSlivers: ALL_SLIVERS.length,
+    totalAuthors: new Set(ALL_SLIVERS.map(s => s.author)).size,
     pendingReports: 0,
     typeDistribution: [
-      { name: "Quote", value: 40 },
-      { name: "Poem", value: 30 },
-      { name: "Literature", value: 20 },
-      { name: "Essay", value: 10 },
+      { name: "Quote", value: ALL_SLIVERS.filter(s => s.type === "Quote").length },
+      { name: "Poem", value: ALL_SLIVERS.filter(s => s.type === "Poem").length },
+      { name: "Literature", value: ALL_SLIVERS.filter(s => s.type === "Literature").length },
+      { name: "Essay", value: ALL_SLIVERS.filter(s => s.type === "Essay").length },
     ],
     activity: [
       { name: "Mon", value: 10 },
@@ -367,14 +181,4 @@ export async function fetchSystemStats(): Promise<SystemStats | null> {
       { name: "Wed", value: 15 },
     ],
   };
-
-  /*
-  try {
-    const { data } = await apiClient.get<SystemStats>("/slivers/stats");
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch system stats:", error);
-    return null;
-  }
-  */
 }

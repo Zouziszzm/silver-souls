@@ -91,7 +91,7 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
   };
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
@@ -104,7 +104,7 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
       <Link
         href={`/sliver/${sliver.id}`}
         className="absolute inset-0 z-0"
-        aria-label={`View ${sliver.type} by ${sliver.author}`}
+        aria-label={`View ${sliver.type} of ${sliver.author}`}
       />
 
       <div className="flex justify-between items-start relative z-10">
@@ -121,6 +121,7 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
                 : "hover:bg-slate-blue-gray/5 hover:text-slate-blue-gray text-ink-gray/40"
             )}
             title={isSaved ? "Saved" : "Save to Collection"}
+            aria-label={isSaved ? "Remove from collection" : "Save to collection"}
           >
             <Bookmark
               className={cn("h-3.5 w-3.5", isSaved && "fill-current")}
@@ -130,6 +131,7 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
             onClick={handleShare}
             className="p-2 hover:bg-slate-blue-gray/5 hover:text-slate-blue-gray text-ink-gray/40 rounded-full transition-colors z-20 relative"
             title="Share"
+            aria-label="Share this sliver"
           >
             <Share2 className="h-3.5 w-3.5" />
           </button>
@@ -163,6 +165,7 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
               rel="noopener noreferrer"
               className="text-sm font-medium text-slate-blue-gray/90 group-hover:text-black transition-colors z-20 relative hover:underline decoration-antique-gold/50 underline-offset-4"
               onClick={(e) => e.stopPropagation()}
+              aria-label={`Visit ${sliver.author}'s profile`}
             >
               {sliver.author}
             </a>
@@ -190,6 +193,7 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
             isLiked ? "bg-antique-gold/10" : "hover:bg-antique-gold/5"
           )}
           title="Give Prestige"
+          aria-label={`Give prestige. Current count: ${prestigeCount}`}
         >
           <span
             className={cn(
@@ -212,6 +216,6 @@ export const SliverCard = ({ sliver, className }: SliverCardProps) => {
 
       {/* Decorative gradient overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/0 to-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-    </motion.div>
+    </motion.article>
   );
 };
